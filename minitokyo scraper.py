@@ -12,16 +12,7 @@ def link_getter(res_link, link_segment):
             all_links.append(link)
     return all_links
 
-
-res = requests.get('http://www.minitokyo.net/Darling in the FranXX')
-res.raise_for_status()
-soup = bs4.BeautifulSoup(res.content, 'lxml')
-links = soup.select('a')
-all_links = []
-for link in links:
-    if 'http://browse.minitokyo.net/gallery/?tid=' in str(link):
-        all_links.append(link)
-scans_link = all_links[-1].get('href')
+scans_link = link_getter('http://www.minitokyo.net/Darling+in+the+FranXX', 'http://browse.minitokyo.net/gallery/?tid=')[-1].get('href')
 
 res = requests.get(scans_link)
 res.raise_for_status()
@@ -31,6 +22,7 @@ links_list = []
 for link in all_links:
     if 'http://gallery.minitokyo.net/view/' in str(link):
         image_link = link.get('href')
+        print(image_link)
         res = requests.get(image_link)
         res.raise_for_status()
         soup = bs4.BeautifulSoup(res.content, 'lxml')
