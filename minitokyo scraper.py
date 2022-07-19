@@ -13,22 +13,17 @@ def link_getter(res_link, link_segment):
     return all_links
 
 scans_link = link_getter('http://www.minitokyo.net/Darling+in+the+FranXX', 'http://browse.minitokyo.net/gallery/?tid=')[-1].get('href')
+image_link = link_getter(str(scans_link), 'http://gallery.minitokyo.net/view/')
+for i, link in enumerate(image_link):
+    image_link[i] = image_link[i].get('href')
 
-res = requests.get(scans_link)
-res.raise_for_status()
-soup = bs4.BeautifulSoup(res.content, 'lxml')
-all_links = soup.select('a')
-links_list = []
-for link in all_links:
-    if 'http://gallery.minitokyo.net/view/' in str(link):
-        image_link = link.get('href')
-        print(image_link)
-        res = requests.get(image_link)
-        res.raise_for_status()
-        soup = bs4.BeautifulSoup(res.content, 'lxml')
-        all_links = soup.select('a')
-    if 'index=3&page=' in str(link):
-        links_list.append(link)
-
+download_links = []
+for link in image_link:
+    download_links.append(link_getter(str(link), 'http://static.minitokyo.net/downloads/'))
+for i, link in enumerate(download_links):
+    download_links[i][0] = download_links[i][0].get('href')
+print(download_links)
+    # for i, link in enumerate(image_link):
+    #     image_link[i] = image_link[i].get('href')
 
 
