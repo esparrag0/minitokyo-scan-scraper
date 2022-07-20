@@ -11,6 +11,8 @@ def link_getter(res_link, link_segment):
             all_links.append(link)
     return all_links
 
+    #Returns all the links of interest (the ones that contain link_segment) in the page given by res_link
+
 def image_downloader(image_link):   
     for i, link in enumerate(image_link):
         image_link[i] = link.get('href')
@@ -28,19 +30,27 @@ def image_downloader(image_link):
         for chunk in res.iter_content(100000):
             imageFile.write(chunk)
         imageFile.close()
+    
+    #Localizes all the scans of the page and downloads them in full size
 
-os.chdir(r'C:\Users\betit\Documents\pics')
 os.makedirs(sys.argv[1], exist_ok=True)
 scans_link = link_getter('http://www.minitokyo.net/' + sys.argv[1], 'http://browse.minitokyo.net/gallery/?tid=')[-1].get('href')
+
+#Makes a directory for the scans and finds the url of the first scans' page
+
 res = requests.get(scans_link)
 res.raise_for_status()
 soup = bs4.BeautifulSoup(res.content, 'lxml')
-
 page_range = str(soup.select('span[style="margin-right: 1em; "]')[0].getText)
 page_regex = re.compile(r'">(.*)\n<i>')
 page_range = page_regex.search(page_range).group(1)
 last_page = page_range.split(' ')[-1]
+
+#Finds the value of the last page of scans 
+
 for i in range(1, int(last_page) + 1):
     page_link = scans_link + '&page=' + str(i)
     image_link = link_getter(str(page_link), 'http://gallery.minitokyo.net/view/')
     image_downloader(image_link)
+
+#Loops through the different pages of scans and downloads each one of them
