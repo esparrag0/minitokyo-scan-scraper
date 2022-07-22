@@ -33,6 +33,7 @@ def image_downloader(image_link):
     
     #Localizes all the scans of the page and downloads them in full size
 
+os.chdir(r'C:\Users\betit\Documents\pics')
 os.makedirs(sys.argv[1], exist_ok=True)
 scans_link = link_getter('http://www.minitokyo.net/' + sys.argv[1], 'http://browse.minitokyo.net/gallery/?tid=')[-1].get('href')
 
