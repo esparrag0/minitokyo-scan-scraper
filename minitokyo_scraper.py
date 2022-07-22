@@ -33,11 +33,12 @@ def image_downloader(image_link):
     
     #Localizes all the scans of the page and downloads them in full size
 
-os.chdir(r'C:\Users\betit\Documents\pics')
-os.makedirs(sys.argv[1], exist_ok=True)
-scans_link = link_getter('http://www.minitokyo.net/' + sys.argv[1], 'http://browse.minitokyo.net/gallery/?tid=')[-1].get('href')
+try:
+    scans_link = link_getter('http://www.minitokyo.net/' + sys.argv[1], 'http://browse.minitokyo.net/gallery/?tid=')[-1].get('href')
+except:
+    sys.exit('There isn\'t an entry with that name')
 
-#Makes a directory for the scans and finds the url of the first scans' page
+#Finds the url of the first scans' page or ends the script if no results were found
 
 res = requests.get(scans_link)
 res.raise_for_status()
@@ -46,8 +47,9 @@ page_range = str(soup.select('span[style="margin-right: 1em; "]')[0].getText)
 page_regex = re.compile(r'">(.*)\n<i>')
 page_range = page_regex.search(page_range).group(1)
 last_page = page_range.split(' ')[-1]
+os.makedirs(sys.argv[1], exist_ok=True)
 
-#Finds the value of the last page of scans 
+#Finds the value of the last page of scans and makes a directory for the scans
 
 for i in range(1, int(last_page) + 1):
     page_link = scans_link + '&page=' + str(i)
